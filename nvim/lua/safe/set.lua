@@ -14,7 +14,11 @@ vim.opt.wrap = false
 
 vim.opt.swapfile = false
 vim.opt.backup = false
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+if string.find(vim.loop.os_uname().sysname, "Windows") then
+    vim.opt.undodir = os.getenv("LOCALAPPDATA") .. "/nvim/undodir"
+else
+    vim.opt.undodir = os.getenv("HOME") .. "/.nvim/undodir"
+end
 vim.opt.undofile = true
 
 vim.opt.hlsearch = false
