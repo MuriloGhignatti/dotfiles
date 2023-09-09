@@ -1,8 +1,6 @@
-#! /bin/sh
+#! /bin/bash
 
 pgrep -x sxhkd > /dev/null || sxhkd &
-
-bspc monitor -d 1 2 3 4 5 6 7 8 9 0
 
 bspc config border_width         1
 bspc config window_gap           6
@@ -17,11 +15,31 @@ bspc rule -a mplayer2 state=floating
 bspc rule -a Kupfer.py focus=on
 bspc rule -a Screenkey manage=off
 
+#setxkbmap -layout br
+setxkbmap -layout us -variant intl
+
 picom -b
+
+my_laptop_external_monitor=$(xrandr --query | grep 'HDMI1')
+if [[ $my_laptop_external_monitor = *connected* ]]; then
+    bspc monitor eDP1 -d 1 2 3 4 5
+    bspc monitor HDMI1 -d 6 7 8 9 0
+    xrandr --output eDP1 --primary --mode 1366x768 --rotate normal \
+        --output HDMI1 --auto --rotate normal --right-of eDP1
+else
+    bspc monitor -d 1 2 3 4 5 6 7 8 9 0
+fi
+
+# If pipewire is not started yet, start it
+if ! pgrep -f pipewire &> /dev/null 2>&1; then
+# According to void linux wiki, this should be started as a user
+    pipewire &
+    wireplumber &
+    pipewire-pulse &
+fi
 
 ~/.config/polybar/launch.sh
 
-feh --bg-scale ~/Pictures/Wallpaper/minecraft2.jpg
+source ~/.config/user-dirs.dirs
 
-setxkbmap br
-
+feh --bg-scale ~/Pictures/Wallpapers/sci-fi-black-hole.jpg

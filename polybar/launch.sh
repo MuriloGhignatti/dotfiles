@@ -1,8 +1,8 @@
 #!/bin/bash
 
-killall -q polybar
+polybar-msg cmd quit
 
-polybar top 2>&1 | tee -a /tmp/polybar.log & disown
-polybar bottom 2>&1 | tee -a /tmp/polybar.log & disown
-
-echo "Polybar launched..."
+for m in $(polybar --list-monitors | cut -d":" -f1); do
+    MONITOR=$m polybar --reload top &
+    MONITOR=$m polybar --reload bottom &
+done
